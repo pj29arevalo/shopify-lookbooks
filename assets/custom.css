@@ -1,0 +1,150 @@
+.lookbook {
+  margin-bottom: 60px;
+}
+
+.lookbook__header {
+  margin-bottom: 30px;
+}
+
+.lookbook__title {
+  margin: 0 0 15px;
+}
+
+.lookbook__products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.lookbook__product {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.lookbook__product:hover {
+  transform: translateY(-5px);
+  /* box-shadow: 0 5px 15px rgba(0,0,0,0.08); */
+}
+
+.lookbook__product-image {
+  overflow: hidden;
+  position: relative;
+}
+
+.lookbook__product-image img {
+  transition: transform 0.5s ease;
+}
+
+.lookbook__product:hover .lookbook__product-image img {
+  transform: scale(1.05);
+}
+
+/* Product badge styles */
+.lookbook__product-sold-out,
+.lookbook__product-on-sale {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  border-radius: 3px;
+  z-index: 2;
+}
+
+.lookbook__product-sold-out {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+.lookbook__product-on-sale {
+  background-color: #c20000;
+  color: #ffffff;
+}
+
+/* Quick view button */
+.lookbook__product-quickview {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #ffffff;
+  text-align: center;
+  padding: 10px;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: all 0.3s ease;
+}
+
+.lookbook__product:hover .lookbook__product-quickview {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Product variants display */
+.lookbook__product-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.lookbook__product-option {
+  display: inline-block;
+  padding: 3px 8px;
+  border: 1px solid #dddddd;
+  border-radius: 3px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.lookbook__product-option.active {
+  border-color: #000000;
+  background-color: #f9f9f9;
+}
+
+/* Add to cart button */
+.lookbook__product-add-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 3px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+.lookbook__product-add-button:hover {
+  background-color: #333333;
+}
+
+.product-lookbooks {
+  margin: 60px 0;
+}
+
+.product-lookbook {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-lookbook:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.product-lookbook__button {
+  transition: background-color 0.3s ease;
+}
+
+.product-lookbook__button:hover {
+  opacity: 0.9;
+}
+
+.product-lookbooks__container {
+  max-width: 1200px;
+  margin: auto;
+}

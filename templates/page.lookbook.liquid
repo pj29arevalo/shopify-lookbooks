@@ -1,0 +1,14 @@
+<div class="page-width">
+  <div class="lookbook-page">
+    <div class="lookbook-page__header">
+      <h1 class="lookbook-page__title">{{ page.title }}</h1>
+      {% if page.content != blank %}
+        <div class="lookbook-page__content rte">
+          {{ page.content }}
+        </div>
+      {% endif %}
+    </div>
+
+    {% section 'lookbook' %}
+  </div>
+</div>

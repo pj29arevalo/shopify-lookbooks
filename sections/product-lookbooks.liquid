@@ -1,0 +1,443 @@
+{% style %}
+   #product-lookbooks-{{ section.id }} {
+      margin: {{ section.settings.margin_top }}px auto {{ section.settings.margin_bottom }}px;
+    }
+    
+    .product-lookbooks__heading {
+      font-size: {{ section.settings.heading_size }}px;
+      color: {{ section.settings.heading_color }};
+      text-align: {{ section.settings.text_alignment }};
+      margin-bottom: 20px;
+    }
+    
+    .product-lookbooks__description {
+      color: {{ section.settings.text_color }};
+      text-align: {{ section.settings.text_alignment }};
+      margin-bottom: 30px;
+    }
+    
+    .product-lookbooks__grid {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+    
+    @media screen and (min-width: 768px) {
+      .product-lookbooks__grid {
+        grid-template-columns: repeat({{ section.settings.columns }}, 1fr);
+      }
+    }
+    
+    .product-lookbooks__product {
+      padding: 0;
+      border-radius: {{ section.settings.border_radius }}px;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .product-lookbooks__product:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+    
+    .product-lookbooks__product-image {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 1 / 1;
+      background-color: #f5f5f5;
+    }
+    
+    .product-lookbooks__product-image img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    
+    .product-lookbooks__product:hover .product-lookbooks__product-image img {
+      transform: scale(1.05);
+    }
+    
+    .product-lookbooks__product-image-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #eeeeee;
+      color: #888888;
+      font-size: 40px;
+      font-weight: bold;
+    }
+    
+    .product-lookbooks__product-sold-out,
+    .product-lookbooks__product-on-sale {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      padding: 5px 10px;
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
+      border-radius: 3px;
+      z-index: 2;
+    }
+    
+    .product-lookbooks__product-sold-out {
+      background-color: #000000;
+      color: #ffffff;
+    }
+    
+    .product-lookbooks__product-on-sale {
+      background-color: {{ section.settings.sale_color }};
+      color: #ffffff;
+    }
+    
+    .product-lookbooks__product-quickview {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: #ffffff;
+      text-align: center;
+      padding: 10px;
+      opacity: 0;
+      transform: translateY(100%);
+      transition: all 0.3s ease;
+    }
+    
+    .product-lookbooks__product:hover .product-lookbooks__product-quickview {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .product-lookbooks__product-info {
+      padding: 15px;
+      border: 1px solid {{ section.settings.border_color }};
+      border-top: none;
+    }
+    
+    .product-lookbooks__product-title {
+      margin: 0 0 8px;
+      font-size: 16px;
+      font-weight: 500;
+      color: {{ section.settings.product_title_color }};
+    }
+    
+    .product-lookbooks__product-price {
+      margin-bottom: 10px;
+    }
+    
+    .product-lookbooks__product-price-sale {
+      color: {{ section.settings.sale_color }};
+      margin-right: 10px;
+      font-weight: bold;
+    }
+    
+    .product-lookbooks__product-price-compare {
+      text-decoration: line-through;
+      opacity: 0.7;
+    }
+    
+    .product-lookbooks__product-form {
+      padding: 0 15px 15px;
+      border: 1px solid {{ section.settings.border_color }};
+      border-top: none;
+    }
+    
+    .product-lookbooks__product-add-button {
+      width: 100%;
+      padding: 10px;
+      background-color: {{ section.settings.button_bg_color }};
+      color: {{ section.settings.button_text_color }};
+      border: none;
+      border-radius: 3px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    
+    .product-lookbooks__product-add-button:hover {
+      opacity: 0.9;
+    }
+{% endstyle %}
+
+{% assign lookbooks = metaobjects.lookbook.values %}
+{% assign lookbooks_with_product = null | sort %}
+
+{% liquid
+  for lookbook in lookbooks
+    if lookbook.show_on_product_pages.value == true
+      for lookbook_product in lookbook.products.value
+        if lookbook_product.id == product.id
+          assign lb = lookbook | sort
+          assign lookbooks_with_product = lookbooks_with_product | concat: lb
+          break
+        endif
+      else
+       continue
+      endfor
+    endif
+  endfor
+%}
+
+<script>
+  console.log({{ lookbooks_with_product | json }})
+</script>
+
+{% if lookbooks_with_product != nil %}
+  <div class="product-lookbooks" id="product-lookbooks-{{ section.id }}">
+    <h2 class="product-lookbooks__heading">{{ section.settings.heading }}</h2>
+    
+    {% if section.settings.show_description and section.settings.description != blank %}
+      <div class="product-lookbooks__description">{{ section.settings.description }}</div>
+    {% endif %}
+    
+    <div class="product-lookbooks__container page-width">
+      {% for lookbook in lookbooks_with_product %}
+      <div class="product-lookbooks__lb-container">
+        <h3 class="product-lookbooks__title">{{ lookbook.title }}</h3>
+        <div class="product-lookbooks__grid">
+          {% for lb_product in lookbook.products.value %}
+            {% comment %}{% if lb_product.id != product.id %} {% endcomment %}
+              <div class="product-lookbooks__product">
+                <a href="{{ lb_product.url }}" class="product-lookbooks__product-link">
+                  <div class="product-lookbooks__product-image">
+                    {% if lb_product.featured_image != blank %}
+                      <img src="{{ lb_product.featured_image | img_url: '500x500', crop: 'center' }}" 
+                           alt="{{ lb_product.title | escape }}" 
+                           loading="lazy"
+                           width="500"
+                           height="500">
+                    {% else %}
+                      <div class="product-lookbooks__product-image-placeholder">
+                        {{ lb_product.title | slice: 0, 1 }}
+                      </div>
+                    {% endif %}
+                    
+                    {% if lb_product.available == false %}
+                      <span class="product-lookbooks__product-sold-out">Sold out</span>
+                    {% elsif lb_product.compare_at_price > product.price %}
+                      <span class="product-lookbooks__product-on-sale">Sale</span>
+                    {% endif %}
+                    
+                    <div class="product-lookbooks__product-quickview">
+                      <span class="product-lookbooks__product-quickview-btn">{{ section.settings.button_text }}</span>
+                    </div>
+                  </div>
+                  
+                  <div class="product-lookbooks__product-info">
+                    <h3 class="product-lookbooks__product-title">{{ lb_product.title }}</h3>
+                    
+                    <div class="product-lookbooks__product-price">
+                      {% if lb_product.compare_at_price > product.price %}
+                        <span class="product-lookbooks__product-price-sale">{{ lb_product.price | money }}</span>
+                        <span class="product-lookbooks__product-price-compare">{{ lb_product.compare_at_price | money }}</span>
+                      {% else %}
+                        <span class="product-lookbooks__product-price-regular">{{ lb_product.price | money }}</span>
+                      {% endif %}
+                    </div>
+                  </div>
+                </a>
+                
+                {% if section.settings.show_add_to_cart %}
+                  <form class="product-lookbooks__product-form" action="/cart/add" method="post">
+                    <input type="hidden" name="id" value="{{ lb_product.selected_or_first_available_variant.id }}">
+                    <button type="submit" class="product-lookbooks__product-add-button">
+                      {% if product.available %}
+                        {{ section.settings.add_to_cart_text }}
+                      {% else %}
+                        {{ section.settings.sold_out_text }}
+                      {% endif %}
+                    </button>
+                  </form>
+                {% endif %}
+              </div>
+           {% comment %} {% endif %} {% endcomment %}
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+{% else %}
+  <div style="display: none;"></div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Product Lookbooks",
+  "class": "product-lookbooks-section",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Shop the look"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Show description",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Discover complementary products that pair well with this item"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "View Product Button Text",
+      "default": "View Details"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "label": "Margin Top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "label": "Margin Bottom",
+      "default": 40
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text Alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Products Per Row",
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "Styling"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 16,
+      "max": 40,
+      "step": 2,
+      "label": "Heading Size",
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Product Border Color",
+      "default": "#eeeeee"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "label": "Product Border Radius",
+      "default": 8
+    },
+    {
+      "type": "color",
+      "id": "product_title_color",
+      "label": "Product Title Color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "sale_color",
+      "label": "Sale Price Color",
+      "default": "#c20000"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Button Background Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_add_to_cart",
+      "label": "Show Add to Cart Button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "add_to_cart_text",
+      "label": "Add to Cart Button Text",
+      "default": "Add to Cart"
+    },
+    {
+      "type": "text",
+      "id": "sold_out_text",
+      "label": "Sold Out Button Text",
+      "default": "Sold Out"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Lookbooks",
+      "category": "Product Information"
+    }
+  ]
+}
+{% endschema %}
